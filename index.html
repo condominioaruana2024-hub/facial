@@ -121,6 +121,36 @@
 </style>
 </head>
 
+<div id="popupConfirmacao" style="
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:999;
+  align-items:center;
+  justify-content:center;
+">
+
+  <div style="
+    background:#ffffff;
+    padding:25px;
+    border-radius:12px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    color:#155724;
+    max-width:300px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  ">
+    ✅ Cadastro enviado com sucesso!
+  </div>
+
+</div>
+
+  
 <body>
 
 <img src="logo.png" class="logo">
@@ -300,25 +330,22 @@ function enviar() {
 
   const img = document.getElementById("canvas").toDataURL("image/jpeg");
 
-  // esconde botão para evitar duplo clique
-  document.querySelector('button[onclick="enviar()"]').style.display = "none";
-
   fetch("https://script.google.com/macros/s/AKfycbznmyTHb6XVuT_qRhH6XREZfA2MThl6EPQ6FVDoHmPqtix8t_ZicT-zR1lJFN5KATRH/exec", {
     method: "POST",
     body: JSON.stringify({ nome, bloco, apto, img })
   }).then(() => {
 
-    // mostra confirmação
-    document.getElementById("confirmacao").style.display = "block";
+    // mostra popup
+    const popup = document.getElementById("popupConfirmacao");
+    popup.style.display = "flex";
 
-    // volta ao início após 1 segundo
+    // após 1 segundo, volta ao início
     setTimeout(() => {
       location.reload();
     }, 1000);
 
   }).catch(() => {
     alert("Erro ao enviar. Tente novamente.");
-    location.reload();
   });
 }
 
@@ -329,6 +356,7 @@ function enviar() {
 
 </body>
 </html>
+
 
 
 
