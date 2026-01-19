@@ -319,9 +319,7 @@ function capturar() {
 }
 
 function enviar() {
-      // mostra popup
-    const popup = document.getElementById("popupConfirmacao");
-    popup.style.display = "flex";
+      
   
   const nome = document.getElementById("nome").value;
   const bloco = document.getElementById("bloco").value;
@@ -339,7 +337,9 @@ function enviar() {
     body: JSON.stringify({ nome, bloco, apto, img })
   }).then(() => {
 
-
+// mostra popup
+    const popup = document.getElementById("popupConfirmacao");
+    popup.style.display = "flex";
 
     // após 1 segundo, volta ao início
     setTimeout(() => {
@@ -355,6 +355,7 @@ function enviar() {
 </script>
 </body>
 </html>
+
 
 
 
