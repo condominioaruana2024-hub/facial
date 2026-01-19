@@ -118,20 +118,6 @@
     max-width: 320px;
     margin: auto;
   }
-select {
-  width: 90vw;
-  max-width: 334px;
-  padding: 5px;
-  margin: 3px auto;
-  font-size: 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  display: block;
-  background: #fff;
-}
-
-
-  
 </style>
 </head>
 
@@ -150,46 +136,8 @@ select {
 <div id="formulario" style="display:none;">
 
   <input id="nome" placeholder="Nome completo">
-  
-<select id="bloco">
-  <option value="">Selecione o Bloco</option>
-  <option value="01">01</option>
-  <option value="02">02</option>
-  <option value="03">03</option>
-  <option value="04">04</option>
-  <option value="05">05</option>
-  <option value="06">06</option>
-  <option value="07">07</option>
-  <option value="08">08</option>
-  <option value="09">09</option>
-  <option value="10">10</option>
-  <option value="11">11</option>
-  <option value="12">12</option>
-  <option value="13">13</option>
-</select>
-
-
-<select id="apto">
-  <option value="">Selecione o Apartamento</option>
-  <option value="101">101</option>
-  <option value="102">102</option>
-  <option value="103">103</option>
-  <option value="104">104</option>
-  <option value="201">201</option>
-  <option value="202">202</option>
-  <option value="203">203</option>
-  <option value="204">204</option>
-  <option value="301">301</option>
-  <option value="302">302</option>
-  <option value="303">303</option>
-  <option value="304">304</option>
-  <option value="401">401</option>
-  <option value="402">402</option>
-  <option value="403">403</option>
-  <option value="404">404</option>
-  
-</select>
-
+  <input id="bloco" placeholder="Bloco">
+  <input id="apto" placeholder="Apartamento">
 
   <div class="info" id="mensagem">
     Posicione seu rosto dentro do oval verde, não use os oculos e não sorria.
@@ -351,7 +299,6 @@ function enviar() {
 
 </body>
 </html>
-
 
 
 
