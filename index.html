@@ -71,52 +71,20 @@
     pointer-events: none;
   }
 
-  .btn-trocar {
-    position: absolute;
-    top: 1px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50%;
-    background: rgba(255,0,0,0.7);
-    z-index: 10;
-  }
-
-  .info {
-    background: #e0f0ff;
-    padding: 5px;
-    border-radius: 8px;
-    margin: 10px auto;
-    font-size: 12px;
-    max-width: 320px;
-  }
-
-  .preview-box {
-    width: 80vw;
-    max-width: 240px;
-    height: 200px;
-    margin: 10px auto;
-    border: 2px dashed #999;
-    border-radius: 12px;
-    display: flex;
+  /* TELA DE CONFIRMAÇÃO */
+  .confirmacao {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    display: none;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    z-index: 9999;
   }
 
-  .preview-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-  }
-
-  .lgpd {
-    background: #fff3cd;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 14px;
-    max-width: 320px;
-    margin: auto;
+  .confirmacao img {
+    width: 60%;
+    max-width: 300px;
   }
 </style>
 </head>
@@ -124,11 +92,10 @@
 <body>
 
 <img src="logo.png" class="logo">
-
 <h4>Cadastro Facial Antony de Oliveira</h4>
 
 <div class="lgpd" id="lgpdBox">
-  Ao enviar sua foto, você autoriza o uso dela para cadastro no sistema de controle de acesso do condomínio.----> TIRE A FOTO EM UM FUNDO CLARO, BEM ILUMINADO, SEM OCULOS, SEM SORRISO , SEM MUITA MAQUIAGEM :) <----.
+  Ao enviar sua foto, você autoriza o uso dela para cadastro no sistema.
   <br><br>
   <button onclick="aceitarLGPD()">OK</button>
 </div>
@@ -139,44 +106,27 @@
   <input id="bloco" placeholder="Bloco">
   <input id="apto" placeholder="Apartamento">
 
-  <div class="info" id="mensagem">
-    Posicione seu rosto dentro do oval verde, não use os oculos e não sorria.
-  </div>
-
   <div class="camera-container">
-    <button class="btn-trocar" onclick="trocarCamera()">Inverter Câmera</button>
     <video id="video" autoplay playsinline></video>
     <div class="face-oval"></div>
   </div>
 
   <button onclick="capturar()">Capturar Foto</button>
 
-  <div class="preview-box">
-    <img id="fotoPreview" src="">
-  </div>
+  <img id="fotoPreview" style="width:200px;border-radius:12px">
 
   <button onclick="enviar()">Finalizar</button>
 
   <canvas id="canvas" style="display:none;"></canvas>
-
-  <div id="status" style="display:none; font-weight:bold; color:green;">
-  <div id="confirmacao" style="   display:none;   font-size: 60px;   color: green;   margin-top: 20px;">
-  ✔
-  <div style="font-size:16px; color:#333;">
-    Cadastro enviado com sucesso!
-  </div>
 </div>
 
-    Salvando dados, aguarde Validação da ADMINSTRAÇÃO...
-  </div>
-
+<!-- TELA DE CONFIRMAÇÃO -->
+<div class="confirmacao" id="confirmacao">
+  <img src="confirmacao.png">
 </div>
 
 <script>
-let usandoFrontal = true;
-let rostoDetectado = false;
 let stream = null;
-let faceMesh = null;
 
 function aceitarLGPD() {
   document.getElementById("lgpdBox").style.display = "none";
@@ -185,162 +135,44 @@ function aceitarLGPD() {
 }
 
 async function iniciarCamera() {
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-  }
-
-  stream = await navigator.mediaDevices.getUserMedia({
-    video: { facingMode: usandoFrontal ? "user" : "environment" }
-  });
-
-  const video = document.getElementById("video");
-  video.srcObject = stream;
-
-  if (usandoFrontal) {
-    iniciarFaceMesh(video);
-  } else {
-    rostoDetectado = true; // libera captura na traseira
-    document.getElementById("mensagem").innerText =
-      "Posicione o rosto no oval verde, SEM OCULOS E NAO SORRIA.";
-  }
-}
-
-function trocarCamera() {
-  usandoFrontal = !usandoFrontal;
-  iniciarCamera();
-}
-
-function iniciarFaceMesh(video) {
-  faceMesh = new FaceMesh({
-    locateFile: file =>
-      `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
-  });
-
-  faceMesh.setOptions({
-    maxNumFaces: 1,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5
-  });
-
-  faceMesh.onResults(results => {
-    if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
-      rostoDetectado = true;
-      document.getElementById("mensagem").innerText =
-        "Mantenha o rosto dentro do oval verde, NAO SORRIA, SEM OCULOS.";
-    } else {
-      rostoDetectado = false;
-      document.getElementById("mensagem").innerText =
-        "Centralize o rosto no oval.";
-    }
-  });
-
-  processarVideo(video);
-}
-
-async function processarVideo(video) {
-  if (!usandoFrontal) return;
-
-  if (video.readyState >= 2) {
-    const off = document.createElement("canvas");
-    const ctx = off.getContext("2d");
-
-    off.width = video.videoWidth;
-    off.height = video.videoHeight;
-
-    ctx.translate(off.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0);
-
-    await faceMesh.send({ image: off });
-  }
-
-  requestAnimationFrame(() => processarVideo(video));
+  stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  document.getElementById("video").srcObject = stream;
 }
 
 function capturar() {
-  if (!rostoDetectado) {
-    alert("Rosto não detectado. Centralize o rosto.");
-    return;
-  }
-
   const video = document.getElementById("video");
   const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
-
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-
-  if (usandoFrontal) {
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-  }
-
-  ctx.drawImage(video, 0, 0);
-
-  document.getElementById("fotoPreview").src =
-    canvas.toDataURL("image/jpeg");
+  canvas.getContext("2d").drawImage(video, 0, 0);
+  document.getElementById("fotoPreview").src = canvas.toDataURL("image/jpeg");
 }
 
 function enviar() {
-  const nome = document.getElementById("nome").value;
-  const bloco = document.getElementById("bloco").value;
-  const apto = document.getElementById("apto").value;
+  const nome = nomeInput.value;
+  const bloco = blocoInput.value;
+  const apto = aptoInput.value;
 
   if (!nome || !bloco || !apto) {
     alert("Preencha todos os campos!");
     return;
   }
 
-  const img = document.getElementById("canvas").toDataURL("image/jpeg");
-
-  // Desabilita o botão para evitar duplo envio
-  document.querySelector("button[onclick='enviar()']").disabled = true;
-
-  fetch("https://script.google.com/macros/s/AKfycbznmyTHb6XVuT_qRhH6XREZfA2MThl6EPQ6FVDoHmPqtix8t_ZicT-zR1lJFN5KATRH/exec", {
+  fetch("SUA_URL_DO_APPS_SCRIPT", {
     method: "POST",
-    body: JSON.stringify({ nome, bloco, apto, img })
-  })
-  .then(() => {
-    // Esconde formulário
-    document.getElementById("formulario").style.display = "none";
-
-    // Mostra confirmação
-    document.getElementById("confirmacao").style.display = "block";
-
-    // Recarrega depois de 2 segundos
-    setTimeout(() => location.reload(), 2000);
-  })
-  .catch(() => {
-    alert("Erro ao enviar. Tente novamente.");
+    body: JSON.stringify({
+      nome, bloco, apto,
+      img: canvas.toDataURL("image/jpeg")
+    })
   });
+
+  // MOSTRA CONFIRMAÇÃO
+  document.getElementById("confirmacao").style.display = "flex";
+
+  // VOLTA PARA INÍCIO APÓS 1 SEGUNDO
+  setTimeout(() => location.reload(), 1000);
 }
-
 </script>
-
-
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
