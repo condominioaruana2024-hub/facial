@@ -286,7 +286,7 @@ function enviar() {
 
   const img = document.getElementById("canvas").toDataURL("image/jpeg");
 
-  fetch("https://script.google.com/macros/s/AKfycbzU99cIj6FOn7S6o3U6jBy5hpkvG757-sbjpvKIZuhUvadXU1W2KHLGDVfWNKiq8RY/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbz5FJw_YCgHXDTgZ_5fnO_D-3KwBhpWmVtjg9kUPbXvgoGnpmeBkRwJa5kf8YOdiLBu/exec", {
     method: "POST",
     body: JSON.stringify({ nome, bloco, apto, img })
   });
@@ -299,6 +299,7 @@ function enviar() {
 
 </body>
 </html>
+
 
 
 
